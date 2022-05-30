@@ -1,0 +1,18 @@
+{
+  "input": "src-js",
+  "output": "src-ts",
+  "matcher": [
+    "/\\.js(x?)$/i",
+    ".ts$1"
+  ],
+  "prefixes": {
+    "a": "any[]",
+    "b": "boolean",
+    "f": "Function",
+    "n": "number",
+    "o": "any",
+    "s": "string",
+    "$e[0-9]*": "any",
+    "$[i-nx-z][0-9]*": "number"
+  }
+}

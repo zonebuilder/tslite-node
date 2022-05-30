@@ -1,0 +1,39 @@
+{
+  "name": "tslite-node",
+  "version": "0.5.0",
+  "main": "./dist/lib/tslite.js",
+  "bin": {
+    "tslite": "./bin/tslite.js"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run lint && npm run convert && npm run compile",
+    "lint": "eslint --fix src-js",
+    "convert": "node src-js/cli.js",
+    "compile": "tsc -t es5 --removeComments",
+    "clean": "rimraf dist && rimraf src-ts",
+    "test": "rimraf src-ts && node src-js/cli.js tests && tsc --noEmit"
+  },
+  "keywords": [
+    "convert",
+    "JavaScript",
+    "TypeScript"
+  ],
+  "author": "The Zonebuilder <zone.builder@gmx.com> (https://www.google.com/search?hl=en&num=50&start=0&safe=0&filter=0&nfpr=1&q=The+Zonebuilder+web+development+programming+IT+society+philosophy+politics)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^17.0.31",
+    "eslint": "^7.32.0",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.6.4"
+  },
+  "dependencies": {},
+  "description": "TSLite - converts your valid JavaScript to TypeScript",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zonebuilder/tslite-node.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zonebuilder/tslite-node/issues"
+  },
+  "homepage": "https://github.com/zonebuilder/tslite-node#readme"
+}
