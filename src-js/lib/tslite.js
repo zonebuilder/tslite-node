@@ -1,3 +1,9 @@
+/*
+	TSLite - converts your valid JavaScript to TypeScript v0.5.0
+	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
+	https://github.com/zonebuilder/tslite-node
+	License: MIT
+*/
 /* tslite-remove: begin */
 /*eslint no-unused-vars: ["error", {"args": "none"}]*/
 /*eslint no-prototype-builtins: "off"*/
@@ -12,6 +18,9 @@
  * type enumerable = {[key: string]: any}
  * type callback = (...args: any[]) => any
  */ 
+/**
+ * Default prefix -> type declaration for basic JavaScript types
+ */
 const oPrefixes = {
     a: 'any[]',
     b: 'boolean',
@@ -21,6 +30,9 @@ const oPrefixes = {
     s: 'string',
 }
 
+/**
+ * A collection of regex strings to be expanded and converted into RegExp objects
+ */
 const oExps = {
     vn: '[A-Za-z_$][Mw$]*',
     vn1: '({vn})',
@@ -39,6 +51,9 @@ const oExps = {
     vars: '({arrow1})|({decl})|({arrow2})|({func2})|({func1})',
     prefix: '^[_$]*([a-z]+)',
     onechar: '^[_$]*[a-z]Md*$',
+    /**
+     * Gets and caches the expanded string corresponding to key
+     */
     get(sItem) {
         const sKey = '_' + sItem
         return this[sKey] || (this[sKey] = this[sItem].replace(/M/g, '\\')
@@ -48,6 +63,9 @@ const oExps = {
             })
         ) /* tslite-add: as string */
     },
+    /**
+     * Augments the collection with strings where the parameter list has initializers
+     */
     up() {
         const fTag = sTag => new RegExp(`(\\{${sTag}\\})`, 'g')
         Object.assign(this, {
@@ -63,11 +81,17 @@ const oExps = {
 }
 oExps.up()
 
+/**
+ * Holds the regular expressions constructed for this library
+ */
 const oRe = Object.fromEntries(Object.entries(oExps)
     .filter(([_sKey, oVal]) => typeof oVal === 'string').map(([sKey, sExp]) => {
         return [sKey, new RegExp(oExps.get(sKey), sExp.substr(0, 1) === '^' || sExp.substr(-1) === '$' ? '' : 'g')]
     }))
 
+/**
+ * Gives the type annotations for the default prefixes non-matches
+ */
 const otherTyper = (sPrefix, sName) => {
     if (sPrefix.length === 1 && oRe.onechar.test(sName)) {
         if (sPrefix === 'e') { return 'any' }
@@ -77,6 +101,9 @@ const otherTyper = (sPrefix, sName) => {
     return ''
 }
 
+/**
+ * Annotates an identifier based on its prefix, an on its name
+ */
 const suffixer = (sName, oPrefixMap, fOther) => {
     if (oRe.prefix.test(sName)) {
         let sType = ''
@@ -96,6 +123,9 @@ const suffixer = (sName, oPrefixMap, fOther) => {
     }
 }
 
+/**
+ * Converts valid JavaScript into type annotated code based on a prefix map, an on an optional custom processor
+ */
 const hinter = (sData, oPrefixMap, fOther) => {
     if (typeof fOther !== 'function') { fOther = null }
     if (oPrefixMap && typeof oPrefixMap === 'object') {	
@@ -119,6 +149,9 @@ const hinter = (sData, oPrefixMap, fOther) => {
             }
         })
         if (aPrefixRe.length) {
+            /**
+             * This default processor is able to deal with prefixes containing regex special chars
+             */
             fOther = (sPrefix, sName) => {
                 if (oNameCache.hasOwnProperty(sName)) { return oNameCache[sName] }
                 for (const [oRe, sType, bVar] of aPrefixRe) {
@@ -141,6 +174,7 @@ const hinter = (sData, oPrefixMap, fOther) => {
         }
     }
     const fPostfix = sName => suffixer(sName, oPrefixMap, fOther)
+    // We parse the data to identify the segments of comments, strings, or regexs
     const oExcept = {left: [], right: []}
     let c = '', ca = ''
     let sComment = '', sString = '', sLast = ''
@@ -213,7 +247,9 @@ const hinter = (sData, oPrefixMap, fOther) => {
         else { return fInside(nFrom, nMid, nRight) }
     }
 
+    // We replace if the start index is standard code – outside comments, strings, and regexs
     return sData.replace(oRe.vars, function(sMatch) {
+        // Avoid treating block instructions as methods
         if (oRe.except.test(sMatch)) { return sMatch }
         const nFrom = arguments[arguments.length - 2]
         if (fInside(nFrom)) { return sMatch }
@@ -242,6 +278,7 @@ const hinter = (sData, oPrefixMap, fOther) => {
                 sLeft = sMatch.slice(0, nSplit)
             }
         }
+        // Detect de-structuring – which has no type annotations in TypeScript
         let nSquare = 0
         let  nCurly = 0
         sMain = sMain.split(',').map(sItem => {
