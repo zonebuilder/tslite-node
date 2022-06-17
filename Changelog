@@ -1,2 +1,4 @@
+v0.5.2 | 2022-06-17
+  * added exit status codes in the CLI
 v0.5.0 | 2022-05-30
   * initial release

@@ -18,10 +18,10 @@ The rules for applying the prefix notation are:
 The exceptions where the prefix notation does not apply are:
 
 *   to variables created through importing mechanisms like ES6 modules or CommonJS
-*   to top-level (arrow) functions i.e. direct children of the module/file
+*   to top-level (arrow) function names i.e. direct children of the module/file
 *   to any established naming convention like class, constructor, or component naming
 *   to structure member names e.g. of class, object, map etc. - use interfaces in type definition file alongside with the generated TS code
-*   to special identifier names like single letter counters, catch exceptions, event parameters, or any other case when the developer considers appropriate- TSLite has the ability to also annotate based on the identifier name
+*   to special identifier names like single letter counters, catch exceptions, event parameters, or any other case when the developer considers appropriate (such as vars included in exports) - TSLite has the ability to also annotate based on the identifier name
 
 In TSLite, a prefix is a left-side sequence of lowercase letters of a string, followed by a non-lowercase character, and optionally preceded by '\_' and/or '$'.
 

@@ -1,5 +1,5 @@
 /*
-	TSLite - converts your valid JavaScript to TypeScript v0.5.0
+	TSLite - converts your valid JavaScript to TypeScript v0.5.2
 	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
 	https://github.com/zonebuilder/tslite-node
 	License: MIT
@@ -61,7 +61,7 @@ const oExps = {
                 if (sCp in this && sCp !== sItem) { return this.get(sCp) }
                 else { return sCh }
             })
-        ) /* tslite-add: as string */
+        )
     },
     /**
      * Augments the collection with strings where the parameter list has initializers
