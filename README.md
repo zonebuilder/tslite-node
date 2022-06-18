@@ -20,7 +20,7 @@ The exceptions where the prefix notation does not apply are:
 *   to variables created through importing mechanisms like ES6 modules or CommonJS
 *   to top-level (arrow) function names i.e. direct children of the module/file
 *   to any established naming convention like class, constructor, or component naming
-*   to structure member names e.g. of class, object, map etc. - use interfaces in type definition file alongside with the generated TS code
+*   to structure member names e.g. of class, object, map etc. - use interfaces in type definition files alongside with the generated TS code
 *   to special identifier names like single letter counters, catch exceptions, event parameters, or any other case when the developer considers appropriate (such as vars included in exports) - TSLite has the ability to also annotate based on the identifier name
 
 In TSLite, a prefix is a left-side sequence of lowercase letters of a string, followed by a non-lowercase character, and optionally preceded by '\_' and/or '$'.
@@ -39,7 +39,7 @@ Workflow
 
 Node 10.x or later is recommended for the current version of TSC and for `npx` command line tool.
 
-Alternatively, you may install TSLitee globally by using `npm install -g tslite-node`, and omit `npx` from the respective commands.
+Alternatively, you may install TSLite globally by using `npm install -g tslite-node`, and omit `npx` from the respective commands.
 
 1.  Go to the project root and install TSLite as a development dependency:
     
@@ -51,7 +51,7 @@ Alternatively, you may install TSLitee globally by using `npm install -g tslite-
         npx tslite --init
         
     
-3.  inspect or edit the generated JDON file by referencing the configuration entries with the `npx tslite -h` command.
+3.  inspect or edit the generated JSON file by referencing the configuration entries with the `npx tslite -h` command.
     
 4.  Put your JavaScript source code into the JS input directory (defaults to 'src-js'). Check if the code is valid, by running, testing, or linting it. A linter is strongly recommended.
     
@@ -142,7 +142,7 @@ Contribute!
 
 Please write an extension for TSC that hints the types based on the identifier prefix (perhaps at AST build phase), and works in conjunction with a prefix configuration stored maybe as an entry of _tsconfig.json_, which should work the same as TSLite both on JS and on TS files.
 
-By having the ability of type hinting based on the prefix notation, you can reach a common denominator where a fully structural checked TS file without annotation can be renamed and work as JS!
+By having the ability of type hinting based on the prefix notation, you can reach a common denominator where a fully structurally checked TS file without annotation can be renamed and work as JS!
 
 Resources
 ---------
