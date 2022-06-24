@@ -1,5 +1,5 @@
 /*
-	TSLite - converts your valid JavaScript to TypeScript v0.5.2
+	TSLite - converts your valid JavaScript to TypeScript v0.5.5
 	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
 	https://github.com/zonebuilder/tslite-node
 	License: MIT
@@ -129,6 +129,9 @@ const suffixer = (sName, oPrefixMap, fOther) => {
 const hinter = (sData, oPrefixMap, fOther) => {
     if (typeof fOther !== 'function') { fOther = null }
     if (oPrefixMap && typeof oPrefixMap === 'object') {	
+        // const aMap = [].concat(oPrefixMap)
+        // oPrefixMap = {}
+        // for (const oItem of aMap) { Object.assign(oPrefixMap, oItem) }
         oPrefixMap = Object.assign({}, ...[].concat(oPrefixMap))
         if (!fOther && !Object.keys(oPrefixMap).length) { return sData }
     }

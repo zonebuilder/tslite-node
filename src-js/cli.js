@@ -1,5 +1,5 @@
 /*
-	TSLite - converts your valid JavaScript to TypeScript v0.5.2
+	TSLite - converts your valid JavaScript to TypeScript v0.5.5
 	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
 	https://github.com/zonebuilder/tslite-node
 	License: MIT
@@ -62,6 +62,9 @@ Options:
 Entries available in the JSON configuration:
   "input"			String or array of strings that are input file or directory paths
   "output"			String or array of strings that are output file or directory paths
+  				If the input list has multiple items and the output is a single item,
+  				the last is assumed a directory, and the output paths will include input
+  				directories names. Otherwise, the mapping is one-to-one.
   "matcher"			One pair array or an array of arrays of pairs with the first pair member
   				a string with wildcards or the string value of a RegExp and the second pair member
   				the output wildcard or replacement string. These strings match path endings.
@@ -115,6 +118,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             return 9
         }
         oSetup.configRoot = aArgs[x + 1]
+        aArgs.splice(x, 2)
     }
     x = aArgs.indexOf('-c')
     if (x > -1) {
@@ -123,6 +127,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             return 9
         }
         oSetup.configName = path.normalize(aArgs[x + 1])
+        aArgs.splice(x, 2)
     }
     let oConfig = null
     if (x > -1 || fs.existsSync(oSetup.configName)) {
@@ -222,7 +227,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
                         const sVal = aParts.join('=').trim()
                         if (sKey && sVal) {
                             oDataPrefixes = oDataPrefixes || {}	
-                            oPrefixes[sKey] = sVal
+                            oDataPrefixes[sKey] = sVal
                         }
                     }
                 }
@@ -261,6 +266,21 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
         mkdir(path.dirname(sPath), true)
         fs.mkdirSync(sPath, 0o755)
     }
+    // multiple input items to single output processing case
+    let bMultiple = false
+    if (oConfig.input.length > 1 && oConfig.output.length < 2) {
+        bMultiple = true
+        const sDest = oConfig.output[0] || '.'
+        for (let i = 0; i < oConfig.input.length; i++) {
+            const sFrom = oConfig.input[i]
+            let bIsDir = false
+            try { bIsDir = fs.statSync(sFrom).isDirectory() }
+            catch (_e17) {}
+            oConfig.output[i] = bIsDir ? path.join(sDest, path.basename(sFrom)) : sDest
+        }
+    }
+    const oBinRe = /^\s*#[\s\S]*?\r?\n/
+    const oCopyRe = /^\s*\/\*[\s\S]*?copyright[\s\S]*?\*\/\r?\n?/i
     // // Main processing loop
     let nErrors = 0
     oConfig.input.forEach((sItem, nIx) => {
@@ -283,7 +303,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             return
         }
         const sOut = path.normalize(oConfig.output[nIx])
-        let bIsDirDest = bIsDirSrc || oDotRe.test(sOut)
+        let bIsDirDest = bMultiple || bIsDirSrc || oDotRe.test(sOut)
         try {
             bIsDirDest = bIsDirDest || fs.statSync(sOut).isDirectory()
         }
@@ -302,7 +322,21 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
                 }
                 catch (e21) {
                     console.error(e21.message)
+                    nErrors++
                     continue
+                }
+                let sBin = ''
+                if (oBinRe.test(sData)) {
+                    sData = sData.replace(oBinRe, sMatch => {
+                        sBin += sMatch
+                        return ''
+                    })
+                }
+                if (oCopyRe.test(sData)) {
+                    sData = sData.replace(oCopyRe, sMatch => {
+                        sBin += sMatch
+                        return ''
+                    })
                 }
                 sData = convert(sData, oConfig.prefixes)
                 let sTo = ''
@@ -334,10 +368,11 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
                 sTo = path.join(sToDir, aDest[1] || path.basename(sTo))
                 if (sFrom === sTo) { sTo += '.ts' }
                 try {
-                    fs.writeFileSync(sTo, sLogo + sData)
+                    fs.writeFileSync(sTo, sBin + sLogo + sData)
                 }
                 catch (e23) {
                     console.error(e23.message)
+                    nErrors++
                     continue
                 }
             }
@@ -348,6 +383,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
                 }
                 catch (e31) {
                     console.error(e31.message)
+                    nErrors++
                     continue
                 }
                 if (!aEntries.length) { continue }
@@ -368,7 +404,10 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
                         bIsDir = fs.statSync(sFrom).isDirectory()
                     }
                     catch (e32) {
-                        if (z > -1) { console.error(e32.message) }
+                        if (z > -1) {
+                            console.error(e32.message)
+                            nErrors++
+                        }
                         continue
                     }
                     if (bIsDir) {
@@ -392,7 +431,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             }
         }
     })	
-    if (nErrors) { console.error(`\n${nErrors} errors encountered while processing the task`) }
+    if (nErrors) { console.error(`\n${nErrors} errors encountered while processing the task queue`) }
 
     return nErrors ? 5 : 0
 })()

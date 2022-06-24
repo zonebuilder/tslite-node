@@ -112,6 +112,9 @@ The following info is extracted by running TSLite with the '-h' argument:
     Entries available in the JSON configuration:
       "input"                       String or array of strings that are input file or directory paths
       "output"                      String or array of strings that are output file or directory paths
+                                    If the input list has multiple items and the output is a single item,
+                                    the last is assumed a directory, and the output paths will include input
+                                    directories names. Otherwise, the mapping is one-to-one.
       "matcher"                     One pair array or an array of arrays of pairs with the first pair member
                                     a string with wildcards or the string value of a RegExp and the second pair member
                                     the output wildcard or replacement string. These strings match path endings.

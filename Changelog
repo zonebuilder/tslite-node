@@ -1,3 +1,6 @@
+v0.5.5 | 2022-06-25
+  * added processing input list of multiple items to a single output dir
+  * added an Express app test
 v0.5.2 | 2022-06-17
   * added exit status codes in the CLI
 v0.5.0 | 2022-05-30
