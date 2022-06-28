@@ -1,5 +1,5 @@
 /*
-	TSLite - converts your valid JavaScript to TypeScript v0.5.5
+	TSLite - converts your valid JavaScript to TypeScript v0.5.6
 	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
 	https://github.com/zonebuilder/tslite-node
 	License: MIT

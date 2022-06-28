@@ -1,3 +1,5 @@
+v0.5.6 | 2022-06-27
+  * in one-to-one mapping, for each empty or missing output item, the output dir will be the input dir basename
 v0.5.5 | 2022-06-25
   * added processing input list of multiple items to a single output dir
   * added an Express app test

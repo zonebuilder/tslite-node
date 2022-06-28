@@ -1,5 +1,5 @@
 /*
-	TSLite - converts your valid JavaScript to TypeScript v0.5.5
+	TSLite - converts your valid JavaScript to TypeScript v0.5.6
 	Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
 	https://github.com/zonebuilder/tslite-node
 	License: MIT
@@ -276,7 +276,7 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             let bIsDir = false
             try { bIsDir = fs.statSync(sFrom).isDirectory() }
             catch (_e17) {}
-            oConfig.output[i] = bIsDir ? path.join(sDest, path.basename(sFrom)) : sDest
+            oConfig.output[i] = bIsDir && sFrom !== '.' ? path.join(sDest, path.basename(sFrom)) : sDest
         }
     }
     const oBinRe = /^\s*#[\s\S]*?\r?\n/
@@ -302,7 +302,9 @@ Copyright (c) 2022 The Zonebuilder <zone.builder@gmx.com>
             nErrors++
             return
         }
-        const sOut = path.normalize(oConfig.output[nIx])
+        let sOut = bIsDirSrc && !oConfig.output[nIx] && oConfig.input[nIx] !== '.' ?
+            path.basename(sItem) : oConfig.output[nIx]
+        sOut = path.normalize(sOut || '')
         let bIsDirDest = bMultiple || bIsDirSrc || oDotRe.test(sOut)
         try {
             bIsDirDest = bIsDirDest || fs.statSync(sOut).isDirectory()

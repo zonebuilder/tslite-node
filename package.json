@@ -1,6 +1,6 @@
 {
   "name": "tslite-node",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "main": "./dist/lib/tslite.js",
   "bin": {
     "tslite": "./bin/tslite.js"
